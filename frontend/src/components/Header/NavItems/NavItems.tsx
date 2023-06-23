@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { Link } from "react-router-dom";
 
 interface NavItemsProps {
   isMobile?: boolean;
@@ -23,7 +24,15 @@ const NavItems = ({ isMobile }: NavItemsProps) => {
         startIcon={<LoginIcon />}
         sx={{ mr: 2 }}
       >
-        Sign In
+        <Link
+          to="/login"
+          style={{
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
+          Sign In
+        </Link>
       </Button>
       <Button
         color="inherit"
@@ -31,7 +40,15 @@ const NavItems = ({ isMobile }: NavItemsProps) => {
         startIcon={<HowToRegIcon />}
         sx={{ mr: 2 }}
       >
-        Sign Up
+        <Link
+          to="/register"
+          style={{
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
+          Sign Up
+        </Link>
       </Button>
       <Button
         color="inherit"
