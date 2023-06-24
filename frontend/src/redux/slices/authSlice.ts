@@ -7,23 +7,27 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  userInfo: null,
+  userInfo: localStorage.getItem("userInfo")
+    ? JSON.parse(localStorage.getItem("userInfo")!)
+    : null,
 };
 
 export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<User>) => {
+    setCredentials: (state, action: PayloadAction<User>) => {
       state.userInfo = action.payload;
+      localStorage.setItem("userInfo", JSON.stringify(action.payload));
     },
     logout: (state) => {
       state.userInfo = null;
+      localStorage.removeItem("userInfo");
     },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { setCredentials, logout } = authSlice.actions;
 
 // === SELECTORS ===
 
@@ -32,5 +36,3 @@ export const selectUserInfo = createSelector(
   [selectAuthStore],
   (auth) => auth.userInfo
 );
-
-export default authSlice.reducer;

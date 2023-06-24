@@ -1,11 +1,15 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import authSlice from "./slices/authSlice";
+import { authSlice } from "./slices/authSlice";
+import { apiSlice } from "./slices/apiSlice";
 
 export const store = configureStore({
   reducer: {
-    auth: authSlice,
+    auth: authSlice.reducer,
+    [apiSlice.reducerPath]: apiSlice.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(apiSlice.middleware),
 });
 
 export type AppDispatch = typeof store.dispatch;
