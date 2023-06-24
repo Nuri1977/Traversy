@@ -11,16 +11,38 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import { useNavigate } from "react-router-dom";
+import { useRegisterMutation } from "../redux/slices/userApiSlice";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import { selectUserInfo, setCredentials } from "../redux/slices/authSlice";
+import { toast } from "react-toastify";
 
 const RegisterPage = () => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [name, setName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const navigate = useNavigate();
+  const [register, { isLoading }] = useRegisterMutation();
+  const dispatch = useAppDispatch();
+  const userInfo = useAppSelector(selectUserInfo);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    if (isLoading) return;
+    try {
+      const res = await register({ name, email, password }).unwrap();
+      dispatch(setCredentials({ ...res }));
+      navigate("/");
+    } catch (error: any) {
+      toast.error(error?.data?.message || error?.error?.message);
+    }
   };
+
+  React.useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [navigate, userInfo]);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -50,6 +72,8 @@ const RegisterPage = () => {
                 id="Name"
                 label="Name"
                 autoFocus
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -60,6 +84,8 @@ const RegisterPage = () => {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -71,6 +97,8 @@ const RegisterPage = () => {
                 type="password"
                 id="password"
                 autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -84,9 +112,9 @@ const RegisterPage = () => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mt: 3, mb: 2, cursor: isLoading ? "not-allowed" : "pointer" }}
           >
-            Sign Up
+            {isLoading ? "Loading..." : "Sign Up"}
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>

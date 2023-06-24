@@ -22,12 +22,13 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const [login] = useLoginMutation();
+  const [login, { isLoading }] = useLoginMutation();
   const dispatch = useAppDispatch();
   const userInfo = useAppSelector(selectUserInfo);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isLoading) return;
     try {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
@@ -92,9 +93,9 @@ const LoginPage = () => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mt: 3, mb: 2, cursor: isLoading ? "not-allowed" : "pointer" }}
           >
-            Sign In
+            {isLoading ? "Loading..." : "Sign In"}
           </Button>
           <Grid container>
             <Grid item xs>
